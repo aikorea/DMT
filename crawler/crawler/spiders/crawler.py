@@ -39,7 +39,7 @@ class DicSpider(Spider):
         sentence['ko'] = ko
 
         q = parse_qs(urlparse(response.url).query)
-        sentence['id'] = q['exampleId'][0]
+        sentence['id'] = int(q['exampleId'][0])
 
         h2 = response.xpath("//h2[@class='dht5']")
         text1 = h2.xpath("./text()").extract()[1:-1]
