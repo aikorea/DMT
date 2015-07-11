@@ -7,13 +7,23 @@ def get_eng_title(q):
 
 def get_eng_content(q):
 	content = q('div[class="article_dvleft"] div[class="article_content"]').html()
+	if content:
+		return remove_tag(content)
 
+	content = q('div[class="article_content"] tr td:first-child').html()
 	if content:
 		return remove_tag(content)
 
 	return ''
 
 def get_kor_title(q):
+	title_selector = q('div[class="article_content"] font[color="014A77"]');
+	title = title_selector.html()
+	ret = remove_tag(title)
+	if len(ret) > 0:
+		title_selector.remove()
+		return ret
+
 	title = q('div[class="title"] h4').html()
 	ret = remove_tag(title)
 	if len(ret) > 0:
@@ -23,6 +33,10 @@ def get_kor_title(q):
 
 def get_kor_content(q):
 	content = q('div[class="article_dvright"] div[class="article_content"]').html()
+	if content:
+		return remove_tag(content)
+
+	content = q('div[class="article_content"] tr td:last-child').html()
 	if content:
 		return remove_tag(content)
 
@@ -55,9 +69,12 @@ count = 0;
 html_path = './html'
 result_path = './parallel_corpus'
 for filename in os.listdir(html_path):
+	if not filename.endswith('.html'):
+		continue
 	count += 1;
 
 	print 'process ' + filename
+
 	filepath = html_path + '/' + filename
 	q = pq(filename=filepath)
 	eng_title = get_eng_title(q)
