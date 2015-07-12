@@ -1,0 +1,10 @@
+insert, find parallel corpora
+
+not for distribution, need flask and pymongo
+
+DB info
+mongoDB at localhost, db name:parcor, collection name:enkr
+
+run init once
+
+TODO: make better page, add package management
