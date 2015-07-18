@@ -1,10 +1,11 @@
 insert, find parallel corpora
 
-not for distribution, need flask and pymongo
+Need mongodb, setup db info in run.sh
+python init.py initiates db
+run mongodb.sh once before start
 
-DB info
-mongoDB at localhost, db name:parcor, collection name:enkr
-
-run init once
+To start,
+pip install -r requirements.txt
+./run.sh
 
 TODO: make better page, add package management
