@@ -1,0 +1,6 @@
+{
+  "source": "NAVER",
+  "type": "sentence",
+  "values": [{"en":"How are you doing?", "kr":"어떻게 지내세요?"},
+             {"en":"Thank you.", "kr":"감사합니다."}]
+}
