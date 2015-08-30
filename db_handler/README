@@ -1,0 +1,7 @@
+fill informations in conf.json, then
+
+insertion
+python file_uploader.py sample.json
+
+selection
+python select_query.py sentence {}
