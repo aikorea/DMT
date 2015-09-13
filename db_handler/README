@@ -1,7 +1,11 @@
-fill informations in conf.json, then
+Fill informations in conf.json, then
 
-insertion
+- Insertion
 python file_uploader.py sample.json
 
-selection
-python select_query.py sentence {}
+- Selection
+python select_query.py sentence --source endic.naver.com --output endic.json
+python select_query.py sentence --query '{"en":{"$exists":"True"}}' --output en.json
+
+- Util - plain text 2 json(for upload)
+python plain2json.py input.txt output.json endic.naver.com --langs en-kr --type sentence

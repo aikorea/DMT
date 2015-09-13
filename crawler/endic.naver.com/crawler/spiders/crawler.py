@@ -30,24 +30,28 @@ class DicSpider(Spider):
 
     def parse(self, response):
         try:
-            ko = response.xpath("//div[@class='trans_cp']/text()").extract()[0]
+            ko = response.xpath("//div[@class='cp_trans_area']/text()").extract()[0]
         except IndexError:
             log.msg("No sentence for %s" % response.url)
             return
 
         sentence = Sentence()
-        sentence['ko'] = ko
+        sentence['ko'] = ko.encode('UTF-8')
 
         q = parse_qs(urlparse(response.url).query)
         sentence['id'] = int(q['exampleId'][0])
 
-        h2 = response.xpath("//h2[@class='dht5']")
-        text1 = h2.xpath("./text()").extract()[1:-1]
-        text2 = h2.xpath("./i/a/text()").extract()
+        h3 = response.xpath("//h3[@class='h_word saying']")
+        text1 = h3.xpath("./text()").extract()[1:-1]
+        text2 = h3.xpath("./span/a/text()").extract()
         result = [None]*(len(text1)+len(text2))
         result[::2] = text2
         result[1::2] = text1
 
-        sentence['en'] = "".join(result).strip()
+        sentence['en'] = "".join(result).strip().encode('UTF-8')
+
+        with open("output.txt", "ab+") as f:
+            f.write(sentence['ko'] + '\n')
+            f.write(sentence['en'] + '\n')
 
         yield sentence

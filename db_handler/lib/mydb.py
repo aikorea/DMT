@@ -6,12 +6,9 @@ def init(conf):
     db.authenticate(conf['id'],conf['pwd'])
     return db
 
-def find(db, args):
-    if args.type == 'sentence':
-        collection = db.sentence
-    else:
-        return None
-    res = collection.find(args.query)
+def find(db, colname, query):
+    collection = db[colname]
+    res = collection.find(query)
     return res
 
 def insert(db, data):
