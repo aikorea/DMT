@@ -5,14 +5,15 @@ from scrapy import log, Spider, Item, Field
 from urlparse import urlparse, parse_qs
 import json
 import time
+import os
 
 LEC_LIST_URL = "http://www.ted.com/talks?language=ko&page=%s"
 LEC_LIST_MAX = 54
 LEC_URL = "http://www.ted.com/talks/%s?language=ko"
 SCRIPT_EN_URL = "http://www.ted.com/talks/%s/transcript?language=en"
 SCRIPT_KO_URL = "http://www.ted.com/talks/%s/transcript?language=ko"
-SCRIPT_EN_PATH = "scripts/%s-en.json"
-SCRIPT_KO_PATH = "scripts/%s-ko.json"
+SCRIPT_EN_PATH = os.path.join("scripts","%s-en.json")
+SCRIPT_KO_PATH = os.path.join("scripts","%s-ko.json")
 
 class TedSpider(Spider):
     name = "ted"
@@ -26,7 +27,8 @@ class TedSpider(Spider):
 
     def __init__(self):
         self.start_urls = [LEC_LIST_URL % (i+1) for i in range(LEC_LIST_MAX)]
-        #self.start_urls = [DIC_URL % 100000]
+        if not os.path.exists("scripts"):
+            os.mkdir("scripts")
 
     def parse(self, response):
         # Select lecture names

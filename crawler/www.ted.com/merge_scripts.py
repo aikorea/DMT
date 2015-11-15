@@ -49,7 +49,7 @@ while count < len(script_names):
 			for i in range(len(ens)):
 				en = ens[i]['en']
 				ko = kos[i]['ko']
-				parcors.append({'en':en, 'ko':ko})
+				parcors.append({'en':en, 'kr':ko})
 
 print("{} script files({} lectures) merged".format(synced_list_count * 2, synced_list_count))
 print("{} sentences in parcors".format(len(parcors)))
