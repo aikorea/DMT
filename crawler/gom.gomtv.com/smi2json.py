@@ -22,11 +22,11 @@ OUT_FILENAME = "gom.json"
 MIN_IOU = 0.8
 NUM_THREAD = 4
 if args.in_dir:
-	IN_DIR = args.in_dir
+    IN_DIR = args.in_dir
 if args.out_file:
-	OUT_FILENAME = args.out_file
+    OUT_FILENAME = args.out_file
 if args.iou:
-	MIN_IOU = float(args.iou)
+    MIN_IOU = float(args.iou)
 
 # SMI files loading
 pat_smi = re.compile(".*\.smi$")
@@ -45,26 +45,33 @@ sub_ll = list()
 for smi_path in smi_path_list:
     # Open SMI with detected encoding
     print 'parsing ' + smi_path + "..."
-    detector = chardet.universaldetector.UniversalDetector()
-    with open(smi_path, 'r') as fd:
-    	lines = fd.readlines()
-    for line in lines:
-    	detector.feed(line)
-    	if detector.done: break
-    detector.close()
-    chdt = detector.result
-    print '\tencoding : ' + chdt['encoding']
 
-    if chdt['encoding'] != "utf-8" or chdt['encoding'] != "ascii":
-        with codecs.open(smi_path, "r", encoding=chdt['encoding']) as fd:
-            smi_data = fd.read()
-    else:
+    try:
+        detector = chardet.universaldetector.UniversalDetector()
         with open(smi_path, 'r') as fd:
-            smi_data = fd.read()
+            lines = fd.readlines()
+        for line in lines:
+            detector.feed(line)
+            if detector.done: break
+        detector.close()
+        chdt = detector.result
+        print '\tencoding : ' + str(chdt['encoding'])
+        if chdt['encoding'] is None:
+            continue
 
-    if smi_data[:10].find("SAMI") == -1:
-        print "\tNot a smi file (header : " + smi_data[:10] + ")"
-        continue
+        if chdt['encoding'] != "utf-8" or chdt['encoding'] != "ascii":
+            with codecs.open(smi_path, "r", encoding=chdt['encoding']) as fd:
+                smi_data = fd.read()
+        else:
+            with open(smi_path, 'r') as fd:
+                smi_data = fd.read()
+
+        if smi_data[:10].find("SAMI") == -1:
+            print "\tNot a smi file (header : " + smi_data[:10] + ")"
+            continue
+    except Exception, e:
+        print e
+        continue    
 
     # Parse subtitle tag and sort with language(en/kr)
     kr_sub_list = list()
@@ -133,18 +140,20 @@ for smi_path in smi_path_list:
 # merge parsed subs and make JSON output
 print str(len(sub_ll)) + ' files parsed'
 if len(sub_ll) > 0:
+    print 'merge parcors'
     parcors = list()
     for sub_list in sub_ll:
         for sub in sub_list:
             parcors.append({'kr':sub[1], 'en':sub[2]})
 
-	data = dict()
-	data['source'] = 'gom'
-	data['type'] = 'sentence'
-	data['values'] = parcors
+    data = dict()
+    data['source'] = 'gom'
+    data['type'] = 'sentence'
+    data['values'] = parcors
 
-	with open(OUT_FILENAME, 'w') as fd:
-		json.dump(data, fd, indent=2)
+    print 'JSON file write...'
+    with open(OUT_FILENAME, 'w') as fd:
+        json.dump(data, fd, indent=2)
 
-
+print 'Done!'
 print 'Elapsed time:' + str(time.time() - start_time)
