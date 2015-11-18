@@ -32,12 +32,14 @@ class GomSpider(Spider):
 
     #custom_settings = {'CONCURRENT_REQUESTS':5}
 
-    def __init__(self, page=None):
+    def __init__(self, page=None, down_dir=None):
         if page is not None:
-            SUB_LIST_START_PAGE, SUB_LIST_END_PAGE = [int(temp) for temp in page.split('-')]
-        self.start_urls = [SUB_LIST_URL % (i+1) for i in range(SUB_LIST_START_PAGE, SUB_LIST_END_PAGE + 1)]
-        if not os.path.exists(DOWN_SUB_DIR):
-            os.mkdir(DOWN_SUB_DIR)
+            self.start_page, self.end_page = [int(temp) for temp in page.split('-')]
+        self.start_urls = [SUB_LIST_URL % (i+1) for i in range(self.start_page, self.end_page + 1)]
+        if down_dir is not None:
+            self.down_dir = down_dir
+        if not os.path.exists(self.down_dir):
+            os.mkdir(self.down_dir)
 
     def parse(self, response):
         # Select subtitle article page URL
@@ -61,7 +63,7 @@ class GomSpider(Spider):
         smi_filename = temp.path[temp.path.rfind('/')+1:]
         if smi_filename.endswith('.smi'):
             smi_filename = query_dict['intSeq'][0] + '_' + query_dict['capSeq'][0] + '_' + urllib.unquote(smi_filename).decode('utf-8')
-            smi_filepath = os.path.join(DOWN_SUB_DIR, smi_filename)
+            smi_filepath = os.path.join(self.down_dir, smi_filename)
             if not os.path.exists(smi_filepath):
                 with open(smi_filepath, "wb") as f:
                     f.write(response.body)
